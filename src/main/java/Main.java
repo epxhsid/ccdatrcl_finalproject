@@ -1,15 +1,17 @@
+
 import java.io.*;
 import java.util.*;
 
 public class Main {
 
     static ArrayList<Anime> animeList = new ArrayList<>();
+    static ArrayList<Anime> watchlist = new ArrayList<>();
+    static ArrayList<Anime> recentlyViewed = new ArrayList<>();
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
 
-        
         String file = new File("data/anime.csv").exists()
                 ? "data/anime.csv"
                 : "../../../data/anime.csv";
@@ -21,10 +23,8 @@ public class Main {
         System.out.println("========================================");
 
         if (animeList.isEmpty()) {
-
             System.out.println("No anime data was loaded.");
             System.out.println("Check that data/anime.csv exists.");
-
             return;
         }
 
@@ -36,10 +36,14 @@ public class Main {
             System.out.println("----------------------------------------");
             System.out.println("[1] Search Anime");
             System.out.println("[2] Get Recommendations");
-            System.out.println("[3] Top Anime");
-            System.out.println("[4] Exit");
+            System.out.println("[3] Similar Anime");
+            System.out.println("[4] Top Anime");
+            System.out.println("[5] Surprise Me");
+            System.out.println("[6] My Watchlist");
+            System.out.println("[7] Anime Statistics");
+            System.out.println("[8] Recently Viewed");
+            System.out.println("[9] Exit");
             System.out.println("----------------------------------------");
-
             System.out.print("Choice: ");
 
             String choice = sc.nextLine();
@@ -54,9 +58,29 @@ public class Main {
 
             } else if (choice.equals("3")) {
 
-                topAnime();
+                similarAnime(sc);
 
             } else if (choice.equals("4")) {
+
+                topAnime();
+
+            } else if (choice.equals("5")) {
+
+                surpriseMe();
+
+            } else if (choice.equals("6")) {
+
+                watchlistMenu(sc);
+
+            } else if (choice.equals("7")) {
+
+                statistics();
+
+            } else if (choice.equals("8")) {
+
+                recentlyViewed();
+
+            } else if (choice.equals("9")) {
 
                 System.out.println();
                 System.out.println("Thank you for using AnimeRec!");
@@ -74,14 +98,16 @@ public class Main {
     }
 
 
-
+    // ========================================
     // LOAD CSV
+    // ========================================
+
     static void loadAnime(String file) {
 
         try (BufferedReader br =
                      new BufferedReader(new FileReader(file))) {
 
-            br.readLine(); // skip header
+            br.readLine();
 
             String line;
 
@@ -142,29 +168,37 @@ public class Main {
     }
 
 
-   
+    // ========================================
     // SEARCH - LINEAR SEARCH
+    // ========================================
 
     static void search(Scanner sc) {
 
         System.out.println();
-        System.out.println("============= SEARCH ANIME =============");
+
+        System.out.println(
+                "============= SEARCH ANIME ============="
+        );
 
         System.out.print("Enter anime title: ");
 
         String keyword =
-                sc.nextLine().toLowerCase().trim();
+                sc.nextLine()
+                        .toLowerCase()
+                        .trim();
 
         int count = 0;
 
-        /*
-         * Linear Search
-         */
+        // Linear Search
         for (Anime anime : animeList) {
 
-            if (anime.title.toLowerCase().contains(keyword)) {
+            if (anime.title
+                    .toLowerCase()
+                    .contains(keyword)) {
 
                 show(anime);
+
+                addRecent(anime);
 
                 count++;
 
@@ -175,20 +209,19 @@ public class Main {
 
         if (count == 0) {
 
-            System.out.println("No anime found.");
+            System.out.println(
+                    "No anime found."
+            );
         }
     }
 
 
-   
+    // ========================================
     // RECOMMENDATIONS
-    
+    // ========================================
 
     static void recommend(Scanner sc) {
 
-        /*
-         * Genre names and their IDs from the dataset.
-         */
         String[] genreNames = {
 
                 "Action",
@@ -229,17 +262,29 @@ public class Main {
 
 
         System.out.println();
-        System.out.println("========================================");
-        System.out.println("          GET RECOMMENDATIONS");
-        System.out.println("========================================");
+
+        System.out.println(
+                "========================================"
+        );
+
+        System.out.println(
+                "          GET RECOMMENDATIONS"
+        );
+
+        System.out.println(
+                "========================================"
+        );
 
         System.out.println();
-        System.out.println("Choose a genre:");
+
+        System.out.println(
+                "Choose a genre:"
+        );
+
         System.out.println();
 
 
         // Display genre options
-
         for (int i = 0; i < genreNames.length; i++) {
 
             System.out.println(
@@ -249,11 +294,16 @@ public class Main {
         }
 
         System.out.println();
-        System.out.println("[0] Back to Main Menu");
+
+        System.out.println(
+                "[0] Back to Main Menu"
+        );
 
         System.out.println();
 
-        System.out.print("Enter your choice: ");
+        System.out.print(
+                "Enter your choice: "
+        );
 
         int choice;
 
@@ -266,33 +316,35 @@ public class Main {
 
         } catch (Exception e) {
 
-            System.out.println("Invalid choice.");
+            System.out.println(
+                    "Invalid choice."
+            );
+
             return;
         }
 
 
         // Back to menu
-
         if (choice == 0) {
-
             return;
         }
 
 
         // Invalid option
-
         if (
                 choice < 1
                         || choice > genreNames.length
         ) {
 
-            System.out.println("Invalid choice.");
+            System.out.println(
+                    "Invalid choice."
+            );
+
             return;
         }
 
 
         // Get selected genre
-
         String selectedGenre =
                 genreNames[choice - 1];
 
@@ -309,7 +361,6 @@ public class Main {
 
 
         // Ask for rating
-
         System.out.println();
 
         System.out.print(
@@ -346,16 +397,12 @@ public class Main {
 
 
         // Store matching anime
-
         ArrayList<Anime> results =
                 new ArrayList<>();
 
 
-        /*
-         * Search through anime list
-         * and filter by genre and rating.
-         */
-
+        // Search through anime list
+        // and filter by genre and rating.
         for (Anime anime : animeList) {
 
             if (
@@ -371,11 +418,8 @@ public class Main {
         }
 
 
-        /*
-         * Sort recommendations
-         * from highest rating to lowest.
-         */
-
+        // Sort recommendations
+        // from highest rating to lowest.
         bubbleSort(results);
 
 
@@ -439,9 +483,197 @@ public class Main {
     }
 
 
+    // ========================================
+    // SIMILAR ANIME
+    // ========================================
 
+    static void similarAnime(Scanner sc) {
+
+        System.out.println();
+
+        System.out.println(
+                "============ SIMILAR ANIME ============"
+        );
+
+        System.out.print(
+                "Enter anime title: "
+        );
+
+        String keyword =
+                sc.nextLine()
+                        .toLowerCase()
+                        .trim();
+
+        Anime selected = null;
+
+
+        // Linear Search
+        for (Anime anime : animeList) {
+
+            if (anime.title
+                    .toLowerCase()
+                    .contains(keyword)) {
+
+                selected = anime;
+                break;
+            }
+        }
+
+
+        if (selected == null) {
+
+            System.out.println(
+                    "Anime not found."
+            );
+
+            return;
+        }
+
+
+        addRecent(selected);
+
+
+        ArrayList<Anime> results =
+                new ArrayList<>();
+
+
+        // Find anime with similar genres
+        for (Anime anime : animeList) {
+
+            if (anime.id == selected.id)
+                continue;
+
+            if (
+                    similarity(
+                            selected,
+                            anime
+                    ) > 0
+            ) {
+
+                results.add(anime);
+            }
+        }
+
+
+        // Sort by number of matching genres
+        for (
+                int i = 0;
+                i < results.size() - 1;
+                i++
+        ) {
+
+            for (
+                    int j = 0;
+                    j < results.size() - i - 1;
+                    j++
+            ) {
+
+                if (
+                        similarity(
+                                selected,
+                                results.get(j)
+                        )
+                        <
+                        similarity(
+                                selected,
+                                results.get(j + 1)
+                        )
+                ) {
+
+                    Anime temp =
+                            results.get(j);
+
+                    results.set(
+                            j,
+                            results.get(j + 1)
+                    );
+
+                    results.set(
+                            j + 1,
+                            temp
+                    );
+                }
+            }
+        }
+
+
+        System.out.println();
+
+        System.out.println(
+                "Similar to: "
+                        + selected.title
+        );
+
+        System.out.println();
+
+
+        if (results.isEmpty()) {
+
+            System.out.println(
+                    "No similar anime found."
+            );
+
+        } else {
+
+            for (
+                    int i = 0;
+                    i < Math.min(10, results.size());
+                    i++
+            ) {
+
+                System.out.println(
+                        "#" + (i + 1)
+                );
+
+                show(
+                        results.get(i)
+                );
+
+                System.out.println();
+            }
+        }
+    }
+
+
+    // ========================================
+    // CALCULATE SIMILARITY
+    // ========================================
+
+    static int similarity(
+            Anime a,
+            Anime b
+    ) {
+
+        int count = 0;
+
+        String[] aGenres =
+                a.genres.split(";");
+
+        String[] bGenres =
+                b.genres.split(";");
+
+
+        for (String x : aGenres) {
+
+            for (String y : bGenres) {
+
+                if (
+                        x.trim()
+                                .equals(y.trim())
+                ) {
+
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+
+    // ========================================
     // CHECK GENRE
-
+    // ========================================
 
     static boolean hasGenre(
             String genres,
@@ -467,19 +699,16 @@ public class Main {
     }
 
 
-    // ==============================
+    // ========================================
     // BUBBLE SORT
-    // ==============================
+    // ========================================
 
     static void bubbleSort(
             ArrayList<Anime> list
     ) {
 
-        /*
-         * Bubble Sort
-         *
-         * Highest rating first.
-         */
+        // Bubble Sort
+        // Highest rating first.
 
         for (
                 int i = 0;
@@ -516,9 +745,9 @@ public class Main {
     }
 
 
-
+    // ========================================
     // TOP ANIME
-  
+    // ========================================
 
     static void topAnime() {
 
@@ -551,40 +780,485 @@ public class Main {
     }
 
 
+    // ========================================
+    // SURPRISE ME
+    // ========================================
 
+    static void surpriseMe() {
+
+        Random random =
+                new Random();
+
+        Anime anime =
+                animeList.get(
+                        random.nextInt(
+                                animeList.size()
+                        )
+                );
+
+
+        addRecent(anime);
+
+
+        System.out.println();
+
+        System.out.println(
+                "============= SURPRISE ME ============="
+        );
+
+        System.out.println(
+                "Your random anime is:"
+        );
+
+        show(anime);
+    }
+
+
+    // ========================================
+    // WATCHLIST MENU
+    // ========================================
+
+    static void watchlistMenu(
+            Scanner sc
+    ) {
+
+        System.out.println();
+
+        System.out.println(
+                "============= MY WATCHLIST ============="
+        );
+
+        System.out.println(
+                "[1] View Watchlist"
+        );
+
+        System.out.println(
+                "[2] Add Anime"
+        );
+
+        System.out.println(
+                "[3] Remove Anime"
+        );
+
+        System.out.println(
+                "[0] Back to Main Menu"
+        );
+
+        System.out.print(
+                "\nChoice: "
+        );
+
+        String choice =
+                sc.nextLine();
+
+
+        if (choice.equals("1")) {
+
+            viewWatchlist();
+
+        } else if (choice.equals("2")) {
+
+            addWatchlist(sc);
+
+        } else if (choice.equals("3")) {
+
+            removeWatchlist(sc);
+
+        } else if (choice.equals("0")) {
+
+            return;
+
+        } else {
+
+            System.out.println(
+                    "Invalid choice."
+            );
+        }
+    }
+
+
+    // ========================================
+    // VIEW WATCHLIST
+    // ========================================
+
+    static void viewWatchlist() {
+
+        if (watchlist.isEmpty()) {
+
+            System.out.println(
+                    "Your watchlist is empty."
+            );
+
+            return;
+        }
+
+
+        System.out.println();
+
+
+        for (
+                int i = 0;
+                i < watchlist.size();
+                i++
+        ) {
+
+            System.out.println(
+                    "[" + (i + 1) + "] "
+                            + watchlist.get(i).title
+            );
+        }
+
+
+        System.out.println(
+                "\nTotal: "
+                        + watchlist.size()
+        );
+    }
+
+
+    // ========================================
+    // ADD TO WATCHLIST
+    // ========================================
+
+    static void addWatchlist(
+            Scanner sc
+    ) {
+
+        System.out.print(
+                "Enter anime title: "
+        );
+
+        String keyword =
+                sc.nextLine()
+                        .toLowerCase()
+                        .trim();
+
+
+        // Linear Search
+        for (Anime anime : animeList) {
+
+            if (
+                    anime.title
+                            .toLowerCase()
+                            .contains(keyword)
+            ) {
+
+                if (
+                        watchlist.contains(anime)
+                ) {
+
+                    System.out.println(
+                            "Already in your watchlist."
+                    );
+
+                } else {
+
+                    watchlist.add(anime);
+
+                    System.out.println(
+                            anime.title
+                                    + " added to watchlist!"
+                    );
+                }
+
+                return;
+            }
+        }
+
+
+        System.out.println(
+                "Anime not found."
+        );
+    }
+
+
+    // ========================================
+    // REMOVE FROM WATCHLIST
+    // ========================================
+
+    static void removeWatchlist(
+            Scanner sc
+    ) {
+
+        if (watchlist.isEmpty()) {
+
+            System.out.println(
+                    "Your watchlist is empty."
+            );
+
+            return;
+        }
+
+
+        viewWatchlist();
+
+
+        System.out.print(
+                "Enter number to remove: "
+        );
+
+
+        try {
+
+            int choice =
+                    Integer.parseInt(
+                            sc.nextLine()
+                    );
+
+
+            if (
+                    choice < 1
+                            || choice > watchlist.size()
+            ) {
+
+                System.out.println(
+                        "Invalid choice."
+                );
+
+                return;
+            }
+
+
+            Anime removed =
+                    watchlist.remove(
+                            choice - 1
+                    );
+
+
+            System.out.println(
+                    removed.title
+                            + " removed from watchlist."
+            );
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Invalid choice."
+            );
+        }
+    }
+
+
+    // ========================================
+    // ANIME STATISTICS
+    // ========================================
+
+    static void statistics() {
+
+        double totalScore = 0;
+
+        int ratedAnime = 0;
+
+        Anime highestRated = null;
+
+        HashMap<String, Integer> types =
+                new HashMap<>();
+
+
+        for (Anime anime : animeList) {
+
+            // Calculate average rating
+            if (anime.score > 0) {
+
+                totalScore += anime.score;
+
+                ratedAnime++;
+
+
+                if (
+                        highestRated == null
+                                || anime.score
+                                > highestRated.score
+                ) {
+
+                    highestRated = anime;
+                }
+            }
+
+
+            // Count anime types
+            types.put(
+                    anime.type,
+                    types.getOrDefault(
+                            anime.type,
+                            0
+                    ) + 1
+            );
+        }
+
+
+        System.out.println();
+
+        System.out.println(
+                "========== ANIME STATISTICS =========="
+        );
+
+
+        System.out.println(
+                "Total Anime: "
+                        + animeList.size()
+        );
+
+
+        System.out.printf(
+                "Average Rating: %.2f%n",
+                ratedAnime == 0
+                        ? 0
+                        : totalScore / ratedAnime
+        );
+
+
+        System.out.println(
+                "Watchlist: "
+                        + watchlist.size()
+        );
+
+
+        System.out.println(
+                "Recently Viewed: "
+                        + recentlyViewed.size()
+        );
+
+
+        if (highestRated != null) {
+
+            System.out.println(
+                    "Highest Rated: "
+                            + highestRated.title
+                            + " ("
+                            + highestRated.score
+                            + ")"
+            );
+        }
+
+
+        System.out.println();
+
+        System.out.println(
+                "Anime by Type:"
+        );
+
+
+        for (String type : types.keySet()) {
+
+            System.out.println(
+                    "- "
+                            + type
+                            + ": "
+                            + types.get(type)
+            );
+        }
+    }
+
+
+    // ========================================
+    // RECENTLY VIEWED
+    // ========================================
+
+    static void recentlyViewed() {
+
+        System.out.println();
+
+        System.out.println(
+                "========= RECENTLY VIEWED ========="
+        );
+
+
+        if (recentlyViewed.isEmpty()) {
+
+            System.out.println(
+                    "No anime viewed yet."
+            );
+
+            return;
+        }
+
+
+        for (
+                int i = 0;
+                i < recentlyViewed.size();
+                i++
+        ) {
+
+            System.out.println(
+                    "[" + (i + 1) + "] "
+                            + recentlyViewed.get(i).title
+            );
+        }
+    }
+
+
+    // ========================================
+    // ADD TO RECENTLY VIEWED
+    // ========================================
+
+    static void addRecent(
+            Anime anime
+    ) {
+
+        recentlyViewed.remove(anime);
+
+        recentlyViewed.add(
+                0,
+                anime
+        );
+
+
+        // Keep only the latest 10
+        if (
+                recentlyViewed.size() > 10
+        ) {
+
+            recentlyViewed.remove(
+                    recentlyViewed.size() - 1
+            );
+        }
+    }
+
+
+    // ========================================
     // DISPLAY ANIME
-   
+    // ========================================
 
-    static void show(Anime anime) {
+    static void show(
+            Anime anime
+    ) {
 
         System.out.println(
                 "----------------------------------------"
         );
+
 
         System.out.println(
                 "Title    : "
                         + anime.title
         );
 
+
         System.out.println(
                 "Type     : "
                         + anime.type
         );
+
 
         System.out.println(
                 "Episodes : "
                         + anime.episodes
         );
 
+
         System.out.printf(
                 "Rating   : %.2f%n",
                 anime.score
         );
 
+
         System.out.println(
                 "Genres   : "
                         + anime.genres
         );
+
 
         System.out.println(
                 "----------------------------------------"
@@ -592,9 +1266,9 @@ public class Main {
     }
 
 
-  
+    // ========================================
     // ANIME CLASS
-    
+    // ========================================
 
     static class Anime {
 
@@ -634,3 +1308,4 @@ public class Main {
         }
     }
 }
+
