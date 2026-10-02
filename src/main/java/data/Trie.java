@@ -2,7 +2,7 @@ package data;
 
 import model.Anime;
 
-@SuppressWarnings("unused")        
+    
 public class Trie {
 
     private final Node root = new Node();
@@ -38,6 +38,54 @@ public class Trie {
         }
     }
 
+
+    /**
+     * Searches for an exact key in the trie.
+     * 
+     * <p>
+     * The search key is normalized by trimming leading/trailing whitespace
+     * and converting characters to lowercase.
+     * <p>
+     * Returns all Anime objects associated with the exact key.
+     * If the key does not exist, an empty array is returned.
+     * <p><b>Time Complexity:</b> O(n + k), where n is the length of the
+     * search key and k is the number of Anime objects associated with
+     * that key.
+     * @param key : The string key to search for in the trie.
+     * @return
+     * An array of Anime objects associated with the key, 
+     * or an empty array if the key does not exist.
+     */
+    public Anime[] search(String key) {
+        if (key == null || key.isBlank()) {
+            return new Anime[0];
+        }
+
+        String normalized = normalize(key);
+        Node current = root;
+
+        for (int i = 0; i < normalized.length(); i++) {
+            char character = normalized.charAt(i);
+
+            Node child = findChild(current, character);
+
+            if (child == null) {
+                return new Anime[0];
+            }
+
+            current = child;
+        }
+
+        if (!current.isEndOfWord || current.animeCount == 0) {
+            return new Anime[0];
+        }
+
+        Anime[] results = new Anime[current.animeCount];
+        System.arraycopy(current.anime, 0, results, 0, current.animeCount);
+
+        return results;
+    }
+
     /**
      * <p>
      * Inserts a key-value pair into the trie. The key is a string and the value is an Anime object.
@@ -54,7 +102,7 @@ public class Trie {
      * @param anime - The Anime object to be associated with the key in the trie.
      */
     public void insert(String key, Anime anime) {
-        if (key == null || key.isEmpty() || anime == null) {
+        if (key == null || key.isBlank() || anime == null) {
             return;
         }
 
