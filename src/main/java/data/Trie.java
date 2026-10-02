@@ -23,7 +23,7 @@ public class Trie {
      * <b>Time Complexity:</b> O(n) for insertion and search operations, 
      * where n is the length of the string being inserted or searched.
      */
-    public class Node {
+    public static class Node {
         private char character;
         private Node firstChild;
         private Node nextSibling;
