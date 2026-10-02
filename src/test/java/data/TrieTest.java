@@ -104,9 +104,9 @@ class TrieTest {
 
         Anime anime = new Anime();
 
-        trie.insert("Cowboy Bebop", anime);
+        trie.insert("Jojo Kimyou na Bouken", anime);
 
-        Anime[] results = trie.search("Naruto");
+        Anime[] results = trie.search("The Eminence in Shadow");
 
         assertEquals(0, results.length);
     }
