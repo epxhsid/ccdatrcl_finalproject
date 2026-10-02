@@ -91,7 +91,6 @@ public class Trie {
      * of the parent node. If a child node with the specified character is found, it is 
      * returned. If no such child node exists, the method returns null.
      * <p>
-     * <p>
      * Example lifecycle: if the parent node has children 'a', 'b', and 'c', and the 
      * character to find is 'b', the method will return the child node representing 'b'. 
      * If the character to find is 'd', the method will return null.
@@ -151,13 +150,11 @@ public class Trie {
      * in the trie. Typically when the function findChild() returns null, indicating 
      * that the character does not exist as a child of the parent node.
      * <p>
-     * <p>
      * Example: If the parent node represents the character 'a' and we want to add a 
      * child node for the character 'b', this function will create a new node for 'b', 
      * set it as the first child of the parent node, and return the newly created child 
      * node. But if a already has a child node for 'b', this function will not be called, 
      * and the existing child node will be used instead.
-     * <p>
      * <p>
      * Example 2: If the parent node represents the character 'a' and it already has a 
      * child node for 'b', and we want to add a child node for the character 'c', this 
@@ -183,7 +180,6 @@ public class Trie {
      * This function normalizes a given string by trimming leading and trailing whitespace 
      * and converting all characters to lowercase. It's a guard clause to guarantee that 
      * the string is in a consistent format before being inserted into the trie.
-     * <p>
      * <p>
      * e.g. if the input string is "  Hello World  ", the function will return "hello world".
      * <p>
