@@ -2,6 +2,7 @@ package data;
 
 import model.Anime;
 
+@SuppressWarnings("unused")        
 public class Trie {
 
     private final Node root = new Node();
