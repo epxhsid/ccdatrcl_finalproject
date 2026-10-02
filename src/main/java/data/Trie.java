@@ -61,11 +61,12 @@ public class Trie {
         String normalized = normalize(key);
         Node current = root;
 
-        // Iterate through each character in the normalized key and traverse or create nodes in the trie accordingly.
-        // example: If the normalized key is "gintama", the loop will iterate through each character, for instance, 
-        // ('g', 'i', 'n', 't', 'a', 'm', 'a') and either find existing child nodes or create new ones as needed.
-        // The final node corresponding to the last character will be marked as the end of a word and the anime object 
-        // will be associated with it.
+        // Iterate through each character in the normalized key and traverse or create nodes in the 
+        // trie accordingly. Example: If the normalized key is "gintama", the loop will iterate 
+        // through each character, for instance, ('g', 'i', 'n', 't', 'a', 'm', 'a') and either find 
+        // existing child nodes or create new ones as needed. The final node corresponding to the 
+        // last character will be marked as the end of a word and the anime object will be 
+        // associated with it.
         for (int i = 0; i < normalized.length(); i++) {
             char character = normalized.charAt(i);
 
