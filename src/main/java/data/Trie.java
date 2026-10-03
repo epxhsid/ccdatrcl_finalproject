@@ -208,7 +208,14 @@ public class Trie {
         }
 
         outCount[0] = count;
-        return results;
+
+        // creates a new array of Anime objects with the exact count of collected 
+        // Anime objects, and copies the collected Anime objects from the results 
+        // array to the trimmed array.
+        Anime[] trimmed = new Anime[count];
+        System.arraycopy(results, 0, trimmed, 0, count);
+
+        return trimmed;
     }
 
     /**

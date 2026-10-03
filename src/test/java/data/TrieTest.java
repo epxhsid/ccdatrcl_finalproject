@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class TrieTest {
 
-    @Test 
+    @Test
     void insertShouldAcceptValidKey() {
         Trie trie = new Trie();
         Anime anime = createAnime();
@@ -18,13 +18,24 @@ class TrieTest {
         assertDoesNotThrow(() -> trie.insert("Mushoku Tensei", anime));
     }
 
-    @Test 
-    void insertShouldNotAcceptNullKey() {
+    @Test
+    void insertShouldIgnoreNullKey() {
         Trie trie = new Trie();
         Anime anime = createAnime();
 
         assertDoesNotThrow(() -> trie.insert(null, anime));
     }
+
+    @Test
+    void insertShouldIgnoreBlankKey() {
+        Trie trie = new Trie();
+        Anime anime = createAnime();
+
+        assertDoesNotThrow(() -> trie.insert("", anime));
+        assertDoesNotThrow(() -> trie.insert("   ", anime));
+    }
+
+    
     
     @Test 
     void insertShouldNotAcceptEmptyKey() {
@@ -34,19 +45,24 @@ class TrieTest {
         assertDoesNotThrow(() -> trie.insert("", anime));
     }
 
-    @Test 
+    @Test
     void insertShouldIgnoreNullAnime() {
         Trie trie = new Trie();
 
         assertDoesNotThrow(() -> trie.insert("Gintama", null));
     }
 
-    @Test 
+    @Test
     void insertShouldNormalizeKey() {
         Trie trie = new Trie();
         Anime anime = createAnime();
 
-        assertDoesNotThrow(() -> trie.insert("  GINTAMA  ", anime));
+        trie.insert("  GINTAMA  ", anime);
+
+        Anime[] results = trie.exactSearch("gintama");
+
+        assertEquals(1, results.length);
+        assertSame(anime, results[0]);
     }
 
     @Test
@@ -54,7 +70,12 @@ class TrieTest {
         Trie trie = new Trie();
         Anime anime = createAnime();
 
-        assertDoesNotThrow(() -> trie.insert("銀魂", anime));
+        trie.insert("銀魂", anime);
+
+        Anime[] results = trie.exactSearch("銀魂");
+
+        assertEquals(1, results.length);
+        assertSame(anime, results[0]);
     }
 
     @Test
@@ -64,17 +85,20 @@ class TrieTest {
         Anime first = createAnime();
         Anime second = createAnime();
 
-        assertDoesNotThrow(() -> {
-            trie.insert("Gintama", first);
-            trie.insert("Gintama", second);
-        });
+        trie.insert("Gintama", first);
+        trie.insert("Gintama", second);
+
+        Anime[] results = trie.exactSearch("Gintama");
+
+        assertEquals(2, results.length);
+        assertSame(first, results[0]);
+        assertSame(second, results[1]);
     }
 
     @Test
-    void searchShouldFindExactTitle() {
+    void exactSearchShouldFindExactTitle() {
         Trie trie = new Trie();
-
-        Anime anime = new Anime();
+        Anime anime = createAnime();
 
         trie.insert("Gintama", anime);
 
@@ -85,24 +109,34 @@ class TrieTest {
     }
 
     @Test
-    void searchShouldBeCaseInsensitive() {
+    void exactSearchShouldBeCaseInsensitive() {
         Trie trie = new Trie();
-
-        Anime anime = new Anime();
+        Anime anime = createAnime();
 
         trie.insert("Gintama", anime);
 
-        Anime[] results = trie.exactSearch("gintama");
+        Anime[] results = trie.exactSearch("gInTaMa");
 
         assertEquals(1, results.length);
         assertSame(anime, results[0]);
     }
 
     @Test
-    void searchShouldReturnEmptyArrayWhenTitleDoesNotExist() {
+    void exactSearchShouldNotMatchPartialTitle() {
         Trie trie = new Trie();
+        Anime anime = createAnime();
 
-        Anime anime = new Anime();
+        trie.insert("Gintama", anime);
+
+        Anime[] results = trie.exactSearch("Gin");
+
+        assertEquals(0, results.length);
+    }
+
+    @Test
+    void exactSearchShouldReturnEmptyArrayWhenTitleDoesNotExist() {
+        Trie trie = new Trie();
+        Anime anime = createAnime();
 
         trie.insert("Jojo Kimyou na Bouken", anime);
 
@@ -112,17 +146,37 @@ class TrieTest {
     }
 
     @Test
-    void searchShouldSupportJapaneseTitle() {
+    void exactSearchShouldSupportJapaneseTitle() {
         Trie trie = new Trie();
-
-        Anime anime = new Anime();
+        Anime anime = createAnime();
 
         trie.insert("無職転生 〜異世界行ったら本気だす〜", anime);
 
-        Anime[] results = trie.exactSearch("無職転生 〜異世界行ったら本気だす〜");
+        Anime[] results = trie.exactSearch(
+                "無職転生 〜異世界行ったら本気だす〜"
+        );
 
         assertEquals(1, results.length);
         assertSame(anime, results[0]);
+    }
+
+    @Test
+    void prefixSearchShouldFindMatchingTitles() {
+        Trie trie = new Trie();
+
+        Anime gintama = createAnime();
+        Anime gintamaMovie = createAnime();
+        Anime naruto = createAnime();
+
+        trie.insert("Gintama", gintama);
+        trie.insert("Gintama Movie", gintamaMovie);
+        trie.insert("Frieren", naruto);
+
+        Anime[] results = trie.prefixSearch("Gin");
+
+        assertEquals(2, results.length);
+        assertSame(gintama, results[0]);
+        assertSame(gintamaMovie, results[1]);
     }
 
     private Anime createAnime() {
