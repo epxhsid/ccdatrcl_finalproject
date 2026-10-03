@@ -2,7 +2,20 @@ package data;
 
 import model.Anime;
 
-    
+/**
+ * A trie (prefix tree) data structure for efficient storage and retrieval of strings.
+ * <p>
+ * The Trie class provides methods for inserting strings and searching for exact matches
+ * or prefixes. It is particularly useful for applications that require fast lookups
+ * based on string prefixes, such as autocomplete features or dictionary implementations.
+ * <p>
+ * The implementation uses a tree-like structure where each node represents a character
+ * in the string, and the path from the root to a node represents a string.
+ * <p>
+ * @author Joaquin M.
+ * @version 1.0
+ * @since 2026-10-04
+ */
 public class Trie {
 
     private final Node root = new Node();

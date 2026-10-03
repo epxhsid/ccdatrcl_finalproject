@@ -34,8 +34,6 @@ class TrieTest {
         assertDoesNotThrow(() -> trie.insert("", anime));
         assertDoesNotThrow(() -> trie.insert("   ", anime));
     }
-
-    
     
     @Test 
     void insertShouldNotAcceptEmptyKey() {
