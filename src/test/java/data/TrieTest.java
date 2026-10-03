@@ -78,7 +78,7 @@ class TrieTest {
 
         trie.insert("Gintama", anime);
 
-        Anime[] results = trie.search("Gintama");
+        Anime[] results = trie.exactSearch("Gintama");
 
         assertEquals(1, results.length);
         assertSame(anime, results[0]);
@@ -92,7 +92,7 @@ class TrieTest {
 
         trie.insert("Gintama", anime);
 
-        Anime[] results = trie.search("gintama");
+        Anime[] results = trie.exactSearch("gintama");
 
         assertEquals(1, results.length);
         assertSame(anime, results[0]);
@@ -106,7 +106,7 @@ class TrieTest {
 
         trie.insert("Jojo Kimyou na Bouken", anime);
 
-        Anime[] results = trie.search("The Eminence in Shadow");
+        Anime[] results = trie.exactSearch("The Eminence in Shadow");
 
         assertEquals(0, results.length);
     }
@@ -119,7 +119,7 @@ class TrieTest {
 
         trie.insert("無職転生 〜異世界行ったら本気だす〜", anime);
 
-        Anime[] results = trie.search("無職転生 〜異世界行ったら本気だす〜");
+        Anime[] results = trie.exactSearch("無職転生 〜異世界行ったら本気だす〜");
 
         assertEquals(1, results.length);
         assertSame(anime, results[0]);

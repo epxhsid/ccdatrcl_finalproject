@@ -56,7 +56,7 @@ public class Trie {
      * An array of Anime objects associated with the key, 
      * or an empty array if the key does not exist.
      */
-    public Anime[] search(String key) {
+    public Anime[] exactSearch(String key) {
         if (key == null || key.isBlank()) {
             return new Anime[0];
         }
@@ -83,6 +83,131 @@ public class Trie {
         Anime[] results = new Anime[current.animeCount];
         System.arraycopy(current.anime, 0, results, 0, current.animeCount);
 
+        return results;
+    }
+
+    /**
+     * Searches for all Anime objects associated with keys that start with the given 
+     * prefix.
+     * <p>
+     * The prefix is normalized by trimming leading/trailing whitespace and converting 
+     * characters to lowercase.
+     * <p>
+     * Returns all Anime objects associated with keys that start with the prefix.
+     * If no keys start with the prefix, an empty array is returned.
+     * <p><b>Time Complexity:</b> O(n + k), where n is the length of the prefix and k 
+     * is the number of Anime objects associated with keys that start with the prefix.
+     * @param prefix : The string prefix to search for in the trie.
+     * @return 
+     * array of Anime objects related with keys that start with the prefix,
+     * or an empty array if no keys start with the prefix.
+     */
+    public Anime[] prefixSearch(String prefix) {
+        if (prefix == null || prefix.isBlank()) {
+            return new Anime[0];
+        }
+
+        String normalized = normalize(prefix);
+        Node current = root;
+
+        // retrieves the node corresponding to the last character of the prefix.
+        // e.g. if prefix input is "G", it will traverse the trie to find the node 
+        // representing 'g'.
+        for (int i = 0; i < normalized.length(); i++) {
+            char character = normalized.charAt(i);
+
+            Node child = findChild(current, character);
+
+            if (child == null) {
+                return new Anime[0];
+            }
+
+            current = child;
+        }
+        
+        int[] count = new int[1];
+
+        return collectAnime(current, count);
+    }
+    
+    /**
+     * Iterative depth-first traversal of the trie starting from the given node.
+     * So it means it uses a LIFO (Last In First Out) stack to explore the nodes.
+     * <p>
+     * This method collects all Anime objects associated with the nodes in the
+     * subtree rooted at the specified startNode. It uses a stack to perform an
+     * iterative depth-first traversal, so that all child nodes are visited.
+     * <p>
+     * Example: If the startNode represents the character 'a' and has child nodes 
+     * for 'b' and 'c', and those child nodes have their own children, the method 
+     * will traverse through all of them and collect any Anime objects associated 
+     * with the nodes in that subtree.
+     * <p>
+     * @param startNode 
+     * : The node from which to start the depth-first traversal.
+     * @param outCount 
+     * : An array of size 1 to hold the count of Anime objects collected during the 
+     * traversal.
+     * @return 
+     * An array of Anime objects collected from the subtree rooted at startNode. 
+     * If no Anime objects are found, an empty array is returned.
+     */
+    private Anime[] collectAnime(Node startNode, int[] outCount) {
+        if (startNode == null) {
+            return new Anime[0];
+        }
+
+        Anime[] results = new Anime[10];
+        int count = 0;
+
+        Node[] stack = new Node[128];
+        int top = 0;
+
+        stack[top++] = startNode;
+
+        while (top > 0) {
+            Node current = stack[--top];
+
+            // checks if the current node is the end of a word 
+            // and has associated Anime objects. 
+            // If so, it adds those Anime objects to the results array.
+            if (current.isEndOfWord && current.animeCount > 0) {
+                if (count + current.animeCount > results.length) {
+                    Anime[] expanded = new Anime[(count + current.animeCount) * 2];
+                    System.arraycopy(results, 0, expanded, 0, count);
+                    results = expanded;
+                }
+
+                System.arraycopy(current.anime, 0, results, count, current.animeCount);
+                count += current.animeCount;
+            }
+
+            // For instance, if the current node at `Node current = stack[--top];`
+            // represents the character 'g', it will append ["i", "o", "u"] to the stack, 
+            // because the current node has children nodes for 'i', 'o', and 'u'.
+            // and this example assumes that the dataset has 
+            // ["Gintama", "Gurren Lagann", "Goblin Slayer"] right now
+            Node child = current.firstChild;
+
+            while (child != null) {
+                // similar to a dynamic resizing array this code block expands 
+                // the stack if the number of nodes to be explored exceeds the 
+                // current stack size. 
+                if (top >= stack.length) {
+                    Node[] expandedStack = new Node[stack.length * 2];
+                    System.arraycopy(stack, 0, expandedStack, 0, stack.length);
+                    stack = expandedStack;
+                }
+
+                stack[top++] = child; // assume that first will be appended is "i"
+                child = child.nextSibling; // assume that next will be appended is "o"
+
+                // then it would loop again, and the next child would be "o"
+                // eventually will reach "u" until it reaches null,
+            }   
+        }
+
+        outCount[0] = count;
         return results;
     }
 
