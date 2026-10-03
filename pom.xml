@@ -44,12 +44,12 @@
     </repositories>
 
     <dependencies>
+        <!-- Commons CSV -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>1.14.1</version>
         </dependency> 
-
         <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
