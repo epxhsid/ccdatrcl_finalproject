@@ -179,6 +179,57 @@ class TrieTest {
         assertSame(gintamaMovie, results[1]);
     }
 
+    @Test
+    void startsWithShouldBeCaseInsensitive() {
+        Trie trie = new Trie();
+        Anime anime = createAnime();
+
+        trie.insert("Gintama", anime);
+
+        Anime[] results = trie.prefixSearch("gIn");
+
+        assertEquals(1, results.length);
+        assertSame(anime, results[0]);
+    }
+
+    @Test
+    void startsWithShouldSupportJapaneseCharacters() {
+        Trie trie = new Trie();
+        Anime anime = createAnime();
+
+        trie.insert("銀魂", anime);
+
+        Anime[] results = trie.prefixSearch("銀");
+
+        assertEquals(1, results.length);
+        assertSame(anime, results[0]);
+    }
+
+    @Test
+    void startsWithShouldReturnEmptyArrayWhenPrefixDoesNotExist() {
+        Trie trie = new Trie();
+        Anime anime = createAnime();
+
+        trie.insert("Gintama", anime);
+
+        Anime[] results = trie.prefixSearch("Nar");
+
+        assertEquals(0, results.length);
+    }
+
+    @Test
+    void startsWithShouldFindTitleWhenPrefixIsTheWholeTitle() {
+        Trie trie = new Trie();
+        Anime anime = createAnime();
+
+        trie.insert("Gintama", anime);
+
+        Anime[] results = trie.prefixSearch("Gintama");
+
+        assertEquals(1, results.length);
+        assertSame(anime, results[0]);
+    }
+
     private Anime createAnime() {
         return new Anime();
     }
