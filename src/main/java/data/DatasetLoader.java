@@ -92,6 +92,14 @@ public class DatasetLoader {
             return null;
         }
 
+        if (value.length() == 7) { // Handle YYYY-MM format by appending "-01" for the first day of the month
+            value += "-01";
+        }
+
+        if (value.length() == 4) { // Handle YYYY format by appending "-01-01" for the first day of the year
+            value += "-01-01";
+        }
+
         return LocalDate.parse(value.trim());
     }
 
