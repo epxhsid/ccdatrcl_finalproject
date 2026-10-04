@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 class TrieTest {
+    private int nextAnimeId = 1;
 
     @Test
     void insertShouldAcceptValidKey() {
@@ -229,6 +230,8 @@ class TrieTest {
     }
 
     private Anime createAnime() {
-        return new Anime();
+        Anime anime = new Anime();
+        anime.setId(nextAnimeId++);
+        return anime;
     }
 }
