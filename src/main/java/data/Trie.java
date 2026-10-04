@@ -96,7 +96,7 @@ public class Trie {
         Anime[] results = new Anime[current.animeCount];
         System.arraycopy(current.anime, 0, results, 0, current.animeCount);
 
-        return results;
+        return deduplicate(results);
     }
 
     /**
@@ -140,7 +140,7 @@ public class Trie {
         
         int[] count = new int[1];
 
-        return collectAnime(current, count);
+        return deduplicate(collectAnime(current, count));
     }
     
     /**
@@ -229,6 +229,16 @@ public class Trie {
         System.arraycopy(results, 0, trimmed, 0, count);
 
         return trimmed;
+    }
+
+    private Anime[] deduplicate(Anime[] results) {
+        AnimeHashSet uniqueAnime = new AnimeHashSet();
+
+        for (Anime anime : results) {
+            uniqueAnime.add(anime);
+        }
+
+        return uniqueAnime.toArray();
     }
 
     /**

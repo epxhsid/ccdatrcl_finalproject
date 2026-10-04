@@ -66,6 +66,7 @@ public class Main {
         System.out.println(
                 anime.getId() + " - " +
                 anime.getTitle()
+                
         );
     }
 }
