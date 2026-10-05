@@ -10,8 +10,10 @@ import com.williamcallahan.tui4j.compat.lipgloss.border.StandardBorder;
 import data.Trie;
 import model.Anime;
 
+@SuppressWarnings("all")
 public class App implements Model {
     private static final int TOP_ANIME_COUNT = 10;
+
 
     private final Trie trie;
     private final Anime[] topAnime;
