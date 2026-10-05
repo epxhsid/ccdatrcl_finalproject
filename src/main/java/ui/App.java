@@ -1,9 +1,12 @@
 package ui;
 
 import com.williamcallahan.tui4j.compat.bubbletea.Command;
+import com.williamcallahan.tui4j.compat.bubbletea.KeyPressMessage;
 import com.williamcallahan.tui4j.compat.bubbletea.Message;
 import com.williamcallahan.tui4j.compat.bubbletea.Model;
 import com.williamcallahan.tui4j.compat.bubbletea.UpdateResult;
+import com.williamcallahan.tui4j.compat.lipgloss.Join;
+import com.williamcallahan.tui4j.compat.lipgloss.Position;
 import com.williamcallahan.tui4j.compat.lipgloss.Style;
 import com.williamcallahan.tui4j.compat.lipgloss.border.StandardBorder;
 
@@ -16,7 +19,10 @@ public class App implements Model {
 
 
     private final Trie trie;
-    private final Anime[] topAnime;
+    private final Anime[] rankedAnime;
+    private int topAnimePage;
+    private int activeTab;
+    private int menuSelection;
 
     private final Style boxStyle = Style.newStyle()
             .border(StandardBorder.RoundedBorder)
@@ -29,17 +35,17 @@ public class App implements Model {
      */
     public App(Trie trie, Anime[] animeList) {
         this.trie = trie;
-        this.topAnime = selectTopAnime(animeList);
+        this.rankedAnime = sortByRank(animeList);
     }
 
     /**
-     * Uses an in-place selection sort to find the top anime based on rank.
+     * Uses an in-place selection sort to order anime based on rank.
      * If the rank is null, it is considered lower than any non-null rank.
+     * Time complexity is O(n^2), which is acceptable for the dataset size.
      * @param animeList : The list of anime to sort and select from.
-     * @return The top anime based on their rank.
+     * @return All anime ordered by rank.
      */
-    private Anime[] selectTopAnime(Anime[] animeList) {
-        int count = Math.min(TOP_ANIME_COUNT, animeList.length);
+    private Anime[] sortByRank(Anime[] animeList) {
         Anime[] sorted = new Anime[animeList.length];
         System.arraycopy(animeList, 0, sorted, 0, animeList.length);
 
@@ -56,9 +62,7 @@ public class App implements Model {
             sorted[bestIndex] = temporary;
         }
 
-        Anime[] top = new Anime[count];
-        System.arraycopy(sorted, 0, top, 0, count);
-        return top;
+        return sorted;
     }
 
     
@@ -77,19 +81,50 @@ public class App implements Model {
         return null;
     }
 
-    @Override public UpdateResult<App> update(Message message) { 
+    @Override
+    public UpdateResult<App> update(Message message) {
+        if (message instanceof KeyPressMessage keyMessage) {
+            if (keyMessage.key().equals("left") && activeTab == 0 && topAnimePage > 0) {
+                topAnimePage--;
+            } else if (keyMessage.key().equals("right")
+                    && activeTab == 0
+                    && (topAnimePage + 1) * TOP_ANIME_COUNT < rankedAnime.length) {
+                topAnimePage++;
+            } else if (keyMessage.key().equals("up")) {
+                menuSelection = 0;
+            } else if (keyMessage.key().equals("down")) {
+                menuSelection = 1;
+            } else if (keyMessage.key().equals("enter")) {
+                activeTab = menuSelection;
+            }
+        }
+
         return new UpdateResult<>(this, null); 
     }
 
     @Override
     public String view() {
-        StringBuilder view = new StringBuilder("Top Anime\n");
+        StringBuilder content = new StringBuilder();
 
-        for (Anime anime : topAnime) {
-            String rank = anime.getRank() == null ? "-" : anime.getRank().toString();
-            view.append(String.format("#%s  %s%n", rank, anime.getTitle()));
+        if (activeTab == 0) {
+            int start = topAnimePage * TOP_ANIME_COUNT;
+            int end = Math.min(start + TOP_ANIME_COUNT, rankedAnime.length);
+            content.append(String.format("Top Anime (%d-%d)%n", start + 1, end));
+
+            for (int i = start; i < end; i++) {
+                Anime anime = rankedAnime[i];
+                String rank = anime.getRank() == null ? "-" : anime.getRank().toString();
+                content.append(String.format("#%s  %s%n", rank, anime.getTitle()));
+            }
         }
 
-        return boxStyle.render(view.toString().stripTrailing());
+        String topAnimeTab = menuSelection == 0 ? "> Top Anime" : "  Top Anime";
+        String searchAnimeTab = menuSelection == 1 ? "> Search Anime" : "  Search Anime";
+        String tabs = topAnimeTab + "\n" + searchAnimeTab;
+
+        String contentBox = boxStyle.render(content.toString().stripTrailing());
+        String tabsBox = boxStyle.render(tabs);
+
+        return Join.joinHorizontal(Position.Top, contentBox, tabsBox);
     }
 }
