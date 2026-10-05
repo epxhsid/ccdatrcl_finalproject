@@ -28,6 +28,9 @@ public class App implements Model {
             .border(StandardBorder.RoundedBorder)
             .padding(1);
 
+    private final Style columnStyle = Style.newStyle()
+            .marginRight(4);
+
     /**
      * Creates a new App instance with the specified search trie and anime list.
      * @param trie The search trie to use for searching anime.
@@ -109,13 +112,23 @@ public class App implements Model {
         if (activeTab == 0) {
             int start = topAnimePage * TOP_ANIME_COUNT;
             int end = Math.min(start + TOP_ANIME_COUNT, rankedAnime.length);
-            content.append(String.format("Top Anime (%d-%d)%n", start + 1, end));
+            StringBuilder firstColumn = new StringBuilder();
+            StringBuilder secondColumn = new StringBuilder();
+            int midpoint = start + (end - start + 1) / 2;
 
-            for (int i = start; i < end; i++) {
-                Anime anime = rankedAnime[i];
-                String rank = anime.getRank() == null ? "-" : anime.getRank().toString();
-                content.append(String.format("#%s  %s%n", rank, anime.getTitle()));
+            for (int i = start; i < midpoint; i++) {
+                appendAnime(firstColumn, rankedAnime[i]);
             }
+            for (int i = midpoint; i < end; i++) {
+                appendAnime(secondColumn, rankedAnime[i]);
+            }
+
+            content.append(String.format("Top Anime (%d-%d)%n%n", start + 1, end));
+            content.append(Join.joinHorizontal(
+                    Position.Top,
+                    columnStyle.render(firstColumn.toString().stripTrailing()),
+                    secondColumn.toString().stripTrailing())
+                );
         }
 
         String topAnimeTab = menuSelection == 0 ? "> Top Anime" : "  Top Anime";
@@ -126,5 +139,36 @@ public class App implements Model {
         String tabsBox = boxStyle.render(tabs);
 
         return Join.joinHorizontal(Position.Top, contentBox, tabsBox);
+    }
+
+    private void appendAnime(StringBuilder content, Anime anime) {
+        String rank = anime.getRank() == null ? "-" : anime.getRank().toString();
+        content.append(String.format("#%s  %s%n", rank, anime.getTitle()));
+        content.append(String.format(
+                "    MAL score: %s%n"
+                        + "    Members: %s%n"
+                        + "    Type: %s%n"
+                        + "    Aired: %s%n%n",
+                displayValue(anime.getMean()),
+                displayValue(anime.getNumListUsers()),
+                displayValue(anime.getMediaType()),
+                formatDateRange(anime)));
+    }
+
+    private String formatDateRange(Anime anime) {
+        String startDate = displayValue(anime.getStartDate());
+        String endDate = displayValue(anime.getEndDate());
+
+        if (anime.getStartDate() == null && anime.getEndDate() == null) {
+            return "-";
+        }
+        if (anime.getEndDate() == null) {
+            return startDate + " to present";
+        }
+        return startDate + " to " + endDate;
+    }
+
+    private String displayValue(Object value) {
+        return value == null ? "-" : value.toString();
     }
 }
