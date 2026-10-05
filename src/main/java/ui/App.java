@@ -138,7 +138,7 @@ public class App implements Model {
         String contentBox = boxStyle.render(content.toString().stripTrailing());
         String tabsBox = boxStyle.render(tabs);
 
-        return Join.joinHorizontal(Position.Top, contentBox, tabsBox);
+        return Join.joinHorizontal(Position.Top, tabsBox, contentBox);
     }
 
     private void appendAnime(StringBuilder content, Anime anime) {
