@@ -11,8 +11,6 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatasetLoader {
 
@@ -22,16 +20,27 @@ public class DatasetLoader {
      *
      * @param path  The file path to the CSV dataset.
      * @param trie  The search Trie where anime records will be indexed.
+     * @param animeList  The list of anime to sort and select from.
+     * @return The top anime based on their rank.
      * @throws IOException If the file cannot be read or parsed.
      */
-    public void load(Path path, Trie trie) throws IOException {
+    public Anime[] load(Path path, Trie trie) throws IOException {
+        AnimeHashSet animeSet = new AnimeHashSet();
+
         try (Reader reader = Files.newBufferedReader(path);
-            CSVParser parser = CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).get().parse(reader)) {
+            CSVParser parser = CSVFormat.DEFAULT.builder()
+                .setHeader()
+                .setSkipHeaderRecord(true)
+                .get()
+                .parse(reader)) {
             for (CSVRecord record : parser) {
                 Anime anime = parseAnime(record);
                 insertTitles(trie, anime);
+                animeSet.add(anime);
             }
         }
+
+        return animeSet.toArray();
     }
 
     private Anime parseAnime(CSVRecord record) {
@@ -114,19 +123,23 @@ public class DatasetLoader {
      * @param value
      * @return
      */
-    private List<Integer> parseIds(String value) {
-        List<Integer> ids = new ArrayList<>();
-
+    private int[] parseIds(String value) {
         if (value == null || value.isBlank()) {
-            return ids;
+            return new int[0];
         }
 
-        for (String id : value.split(";")) {
+        String[] values = value.split(";");
+        int[] ids = new int[values.length];
+        int count = 0;
+
+        for (String id : values) {
             if (!id.isBlank()) {
-                ids.add(Integer.parseInt(id.trim()));
+                ids[count++] = Integer.parseInt(id.trim());
             }
         }
 
-        return ids;
+        int[] result = new int[count];
+        System.arraycopy(ids, 0, result, 0, count);
+        return result;
     }
 }
