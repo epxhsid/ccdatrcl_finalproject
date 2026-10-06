@@ -3,9 +3,9 @@ import java.nio.file.Path;
 
 import com.williamcallahan.tui4j.compat.bubbletea.Program;
 
+import data.Dataset;
 import data.DatasetLoader;
 import data.Trie;
-import model.Anime;
 import ui.App;
 
 public class Main {
@@ -15,15 +15,15 @@ public class Main {
         Path genres = Path.of("data/genres.csv");
         Path studios = Path.of("data/studios.csv");
         DatasetLoader loader = new DatasetLoader();
-        Anime[] animeList;
+        Dataset datasetData;
 
         try {
-            animeList = loader.load(dataset, genres, studios, trie);
+            datasetData = loader.load(dataset, genres, studios, trie);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load anime dataset: " + dataset, e);
         }
 
-        App app = new App(animeList);
+        App app = new App(datasetData.getAnime());
 
         new Program(app).run();
     }
