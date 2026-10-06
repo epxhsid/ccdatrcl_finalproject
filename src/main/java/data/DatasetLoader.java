@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import model.Anime;
+import model.Dataset;
 import model.Genre;
 import model.Studio;
 

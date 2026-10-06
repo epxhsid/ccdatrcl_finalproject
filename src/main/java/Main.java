@@ -3,9 +3,9 @@ import java.nio.file.Path;
 
 import com.williamcallahan.tui4j.compat.bubbletea.Program;
 
-import data.Dataset;
 import data.DatasetLoader;
 import data.Trie;
+import model.Dataset;
 import ui.App;
 
 public class Main {

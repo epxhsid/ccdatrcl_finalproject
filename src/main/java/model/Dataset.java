@@ -1,10 +1,7 @@
-package data;
+package model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import model.Anime;
-import model.Genre;
-import model.Studio;
 
 /**
  * Immutable container for the related datasets loaded by the application.
