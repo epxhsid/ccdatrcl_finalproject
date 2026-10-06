@@ -77,6 +77,7 @@ public class Trie {
      *         An array of Anime objects associated with the key,
      *         or an empty array if the key does not exist.
      */
+    @Deprecated
     public Anime[] exactSearch(String key) {
         if (key == null || key.isBlank()) {
             return new Anime[0];

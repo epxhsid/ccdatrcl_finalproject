@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("deprecation")
 class TrieTest {
     private int nextAnimeId = 1;
 
