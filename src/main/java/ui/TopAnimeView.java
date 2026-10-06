@@ -51,8 +51,7 @@ public class TopAnimeView {
         content.append(String.format(
                 "#%s  %s%n",
                 rank,
-                anime.getTitle()
-        ));
+                anime.getTitle()));
 
         content.append(String.format(
                 "    MAL score: %s%n"
@@ -62,8 +61,7 @@ public class TopAnimeView {
                 displayValue(anime.getMean()),
                 displayValue(anime.getNumListUsers()),
                 displayValue(anime.getMediaType()),
-                formatDateRange(anime)
-        ));
+                formatDateRange(anime)));
     }
 
     private static String formatDateRange(Anime anime) {

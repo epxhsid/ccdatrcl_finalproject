@@ -18,9 +18,9 @@ public class DatasetLoader {
      * Reads an anime CSV dataset from the specified path, parses each record,
      * and maps all variations of the titles into the provided Trie.
      *
-     * @param path  The file path to the CSV dataset.
-     * @param trie  The search Trie where anime records will be indexed.
-     * @param animeList  The list of anime to sort and select from.
+     * @param path      The file path to the CSV dataset.
+     * @param trie      The search Trie where anime records will be indexed.
+     * @param animeList The list of anime to sort and select from.
      * @return The top anime based on their rank.
      * @throws IOException If the file cannot be read or parsed.
      */
@@ -28,11 +28,11 @@ public class DatasetLoader {
         AnimeHashSet animeSet = new AnimeHashSet();
 
         try (Reader reader = Files.newBufferedReader(path);
-            CSVParser parser = CSVFormat.DEFAULT.builder()
-                .setHeader()
-                .setSkipHeaderRecord(true)
-                .get()
-                .parse(reader)) {
+                CSVParser parser = CSVFormat.DEFAULT.builder()
+                        .setHeader()
+                        .setSkipHeaderRecord(true)
+                        .get()
+                        .parse(reader)) {
             for (CSVRecord record : parser) {
                 Anime anime = parseAnime(record);
                 insertTitles(trie, anime);
@@ -72,7 +72,6 @@ public class DatasetLoader {
         trie.insert(anime.getTitleJa(), anime);
     }
 
-
     private Integer parseInt(CSVRecord record, String column) {
         String value = record.get(column);
 
@@ -82,7 +81,6 @@ public class DatasetLoader {
 
         return Integer.parseInt(value.trim());
     }
-
 
     private Double parseDouble(CSVRecord record, String column) {
         String value = record.get(column);
@@ -118,8 +116,9 @@ public class DatasetLoader {
      * it splits the string by semicolons, trims each ID, and parses them as
      * integers, adding them to a list.
      * 
-     * Example: The input string is "1;14;17;23", the function will return a 
+     * Example: The input string is "1;14;17;23", the function will return a
      * list containing the integers [1, 14, 17, 23].
+     * 
      * @param value
      * @return
      */

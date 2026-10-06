@@ -25,8 +25,7 @@ public class AppView {
         return Join.joinHorizontal(
                 Position.Top,
                 tabsBox,
-                contentBox
-        );
+                contentBox);
     }
 
     private static String renderTabs(int selection) {
@@ -45,8 +44,7 @@ public class AppView {
         return switch (state.getActiveTab()) {
             case 0 -> TopAnimeView.render(
                     rankedAnime,
-                    state.getTopAnimePage()
-            );
+                    state.getTopAnimePage());
 
             case 1 -> "Search Anime";
             default -> "";

@@ -2,7 +2,7 @@ package ui;
 
 import lombok.Getter;
 
-@Getter 
+@Getter
 public class AppState {
     private static final int TOP_ANIME_COUNT = 10;
 
@@ -11,7 +11,7 @@ public class AppState {
     private int topAnimePage;
 
     protected void handleKeyPress(String key, int animeCount) {
-        switch(key) {
+        switch (key) {
             case "up" -> menuSelection = 0;
             case "down" -> menuSelection = 1;
 

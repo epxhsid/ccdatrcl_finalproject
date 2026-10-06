@@ -11,6 +11,7 @@ public class Sorter {
      * Uses an in-place selection sort to order anime based on rank.
      * If the rank is null, it is considered lower than any non-null rank.
      * Time complexity is O(n^2), which is acceptable for the dataset size.
+     * 
      * @param animeList : The list of anime to sort and select from.
      * @return All anime ordered by rank.
      */
@@ -35,12 +36,13 @@ public class Sorter {
     /**
      * Compares the rank of two anime objects.
      * If the rank is null, it is considered lower than any non-null rank.
-     * @param first : The first anime object to compare. (example Frieren at 1)
-     * @param second  : The second anime object to compare. (example FMAB at 2)
-     * @return 
-     * Frieren is ranked higher than FMAB, so it returns -1. 
-     * If both ranks are null, it returns 0.
-     * If the first rank is null and the second is not, it returns 1.
+     * 
+     * @param first  : The first anime object to compare. (example Frieren at 1)
+     * @param second : The second anime object to compare. (example FMAB at 2)
+     * @return
+     *         Frieren is ranked higher than FMAB, so it returns -1.
+     *         If both ranks are null, it returns 0.
+     *         If the first rank is null and the second is not, it returns 1.
      */
     public static int compareRank(Anime first, Anime second) {
         if (first.getRank() == null) {
@@ -51,7 +53,6 @@ public class Sorter {
         }
         return Integer.compare(first.getRank(), second.getRank());
     }
-
 
     private static void swap(Anime[] array, int first, int second) {
         Anime temp = array[first];
