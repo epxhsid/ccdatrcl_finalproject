@@ -1,5 +1,7 @@
 package data;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import model.Anime;
 import model.Genre;
 import model.Studio;
@@ -7,16 +9,12 @@ import model.Studio;
 /**
  * Immutable container for the related datasets loaded by the application.
  */
+@Getter 
+@AllArgsConstructor 
 public final class Dataset {
     private final Anime[] anime;
     private final Genre[] genres;
     private final Studio[] studios;
-
-    public Dataset(Anime[] anime, Genre[] genres, Studio[] studios) {
-        this.anime = anime;
-        this.genres = genres;
-        this.studios = studios;
-    }
 
     public Anime[] getAnime() {
         return anime;
