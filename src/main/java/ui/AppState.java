@@ -10,13 +10,30 @@ public class AppState {
     private int menuSelection;
     private int topAnimePage;
     private int searchPage;
+    private int searchSelection;
     private String searchQuery = "";
     private boolean searchSubmitted;
+    private boolean searchDetailOpen;
 
     protected void handleKeyPress(String key, int animeCount, int searchCount) {
         switch (key) {
-            case "up" -> menuSelection = 0;
-            case "down" -> menuSelection = 1;
+            case "up" -> {
+                if (activeTab == 1 && searchSubmitted && !searchDetailOpen && searchSelection > 0) {
+                    searchSelection--;
+                    searchPage = searchSelection / SearchAnimeView.PAGE_SIZE;
+                } else {
+                    menuSelection = 0;
+                }
+            }
+            case "down" -> {
+                if (activeTab == 1 && searchSubmitted && !searchDetailOpen
+                        && searchSelection + 1 < searchCount) {
+                    searchSelection++;
+                    searchPage = searchSelection / SearchAnimeView.PAGE_SIZE;
+                } else {
+                    menuSelection = 1;
+                }
+            }
 
             case "left" -> previousPage();
             case "right" -> nextPage(animeCount, searchCount);
@@ -24,12 +41,17 @@ public class AppState {
             case "tab" -> menuSelection = 1;
             case "shift+tab" -> menuSelection = 0;
             case "enter" -> {
-                if (activeTab == menuSelection && activeTab == 1) {
+                if (activeTab == 1 && searchSubmitted && searchCount > 0 && !searchDetailOpen) {
+                    searchDetailOpen = true;
+                } else if (activeTab == menuSelection && activeTab == 1) {
                     searchSubmitted = true;
+                    searchSelection = 0;
+                    searchPage = 0;
                 } else {
                     activeTab = menuSelection;
                 }
             }
+            case "escape" -> searchDetailOpen = false;
         }
     }
 
@@ -37,6 +59,8 @@ public class AppState {
         searchQuery += character;
         searchSubmitted = false;
         searchPage = 0;
+        searchSelection = 0;
+        searchDetailOpen = false;
     }
 
     protected void removeSearchCharacter() {
@@ -44,6 +68,8 @@ public class AppState {
             searchQuery = searchQuery.substring(0, searchQuery.length() - 1);
             searchSubmitted = false;
             searchPage = 0;
+            searchSelection = 0;
+            searchDetailOpen = false;
         }
     }
 
@@ -54,6 +80,7 @@ public class AppState {
         
         if (activeTab == 1 && searchPage > 0) {
             searchPage--;
+            searchSelection = searchPage * SearchAnimeView.PAGE_SIZE;
         }
     }
 
@@ -64,6 +91,15 @@ public class AppState {
         
         if (activeTab == 1 && (searchPage + 1) * SearchAnimeView.PAGE_SIZE < searchCount) {
             searchPage++;
+            searchSelection = searchPage * SearchAnimeView.PAGE_SIZE;
         }
+    }
+
+    public int getSearchSelection() {
+        return searchSelection;
+    }
+
+    public boolean isSearchDetailOpen() {
+        return searchDetailOpen;
     }
 }

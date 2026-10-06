@@ -23,7 +23,7 @@ public class Main {
             throw new IllegalStateException("Unable to load anime dataset: " + dataset, e);
         }
 
-        App app = new App(datasetData.getAnime(), trie);
+        App app = new App(datasetData, trie);
 
         new Program(app).run();
     }

@@ -9,15 +9,18 @@ import com.williamcallahan.tui4j.compat.bubbletea.UpdateResult;
 import data.Sorter;
 import data.Trie;
 import model.Anime;
+import model.Dataset;
 
 public class App implements Model {
     private final AppState state;
     private final Anime[] rankedAnime;
     private final Trie trie;
+    private final Dataset dataset;
     private Anime[] searchResults = new Anime[0];
 
-    public App(Anime[] animeList, Trie trie) {
-        this.rankedAnime = Sorter.sortByRank(animeList);
+    public App(Dataset dataset, Trie trie) {
+        this.rankedAnime = Sorter.sortByRank(dataset.getAnime());
+        this.dataset = dataset;
         this.trie = trie;
         this.state = new AppState();
     }
@@ -63,7 +66,7 @@ public class App implements Model {
 
     @Override
     public String view() {
-        return AppView.render(state, rankedAnime, searchResults);
+        return AppView.render(state, rankedAnime, searchResults, dataset);
     }
 
     private boolean isNavigationKey(String key) {
@@ -72,6 +75,7 @@ public class App implements Model {
                 || key.equals("left")
                 || key.equals("right")
                 || key.equals("tab")
-                || key.equals("shift+tab");
+                || key.equals("shift+tab")
+                || key.equals("escape");
     }
 }
