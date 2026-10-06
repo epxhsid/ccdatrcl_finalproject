@@ -23,9 +23,10 @@ public class DatasetLoader {
      * Reads an anime CSV dataset from the specified path, parses each record,
      * and maps all variations of the titles into the provided Trie.
      *
-     * @param path The file path to the anime CSV dataset.
-     * @param trie The search Trie where anime records will be indexed.
-     * @return The anime records loaded from the dataset.
+     * @param path      The file path to the CSV dataset.
+     * @param trie      The search Trie where anime records will be indexed.
+     * @param animeList The list of anime to sort and select from.
+     * @return The top anime based on their rank.
      * @throws IOException If the file cannot be read or parsed.
      */
     public Anime[] load(Path path, Trie trie) throws IOException {
