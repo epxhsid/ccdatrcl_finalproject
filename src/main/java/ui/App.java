@@ -5,77 +5,17 @@ import com.williamcallahan.tui4j.compat.bubbletea.KeyPressMessage;
 import com.williamcallahan.tui4j.compat.bubbletea.Message;
 import com.williamcallahan.tui4j.compat.bubbletea.Model;
 import com.williamcallahan.tui4j.compat.bubbletea.UpdateResult;
-import com.williamcallahan.tui4j.compat.lipgloss.Join;
-import com.williamcallahan.tui4j.compat.lipgloss.Position;
-import com.williamcallahan.tui4j.compat.lipgloss.Style;
-import com.williamcallahan.tui4j.compat.lipgloss.border.StandardBorder;
 
-import data.Trie;
+import data.Sorter;
 import model.Anime;
 
-@SuppressWarnings("all")
 public class App implements Model {
-    private static final int TOP_ANIME_COUNT = 10;
-
-
-    private final Trie trie;
+    private final AppState state;
     private final Anime[] rankedAnime;
-    private int topAnimePage;
-    private int activeTab;
-    private int menuSelection;
 
-    private final Style boxStyle = Style.newStyle()
-            .border(StandardBorder.RoundedBorder)
-            .padding(1);
-
-    private final Style columnStyle = Style.newStyle()
-            .marginRight(4);
-
-    /**
-     * Creates a new App instance with the specified search trie and anime list.
-     * @param trie The search trie to use for searching anime.
-     * @param animeList The list of anime to sort and select from.
-     */
-    public App(Trie trie, Anime[] animeList) {
-        this.trie = trie;
-        this.rankedAnime = sortByRank(animeList);
-    }
-
-    /**
-     * Uses an in-place selection sort to order anime based on rank.
-     * If the rank is null, it is considered lower than any non-null rank.
-     * Time complexity is O(n^2), which is acceptable for the dataset size.
-     * @param animeList : The list of anime to sort and select from.
-     * @return All anime ordered by rank.
-     */
-    private Anime[] sortByRank(Anime[] animeList) {
-        Anime[] sorted = new Anime[animeList.length];
-        System.arraycopy(animeList, 0, sorted, 0, animeList.length);
-
-        for (int i = 0; i < sorted.length - 1; i++) {
-            int bestIndex = i;
-            for (int j = i + 1; j < sorted.length; j++) {
-                if (compareRank(sorted[j], sorted[bestIndex]) < 0) {
-                    bestIndex = j;
-                }
-            }
-
-            Anime temporary = sorted[i];
-            sorted[i] = sorted[bestIndex];
-            sorted[bestIndex] = temporary;
-        }
-
-        return sorted;
-    }
- 
-    private int compareRank(Anime first, Anime second) {
-        if (first.getRank() == null) {
-            return second.getRank() == null ? 0 : 1;
-        }
-        if (second.getRank() == null) {
-            return -1;
-        }
-        return Integer.compare(first.getRank(), second.getRank());
+    public App(Anime[] animeList) {
+        this.rankedAnime = Sorter.sortByRank(animeList);
+        this.state = new AppState();
     }
 
     @Override
@@ -85,89 +25,15 @@ public class App implements Model {
 
     @Override
     public UpdateResult<App> update(Message message) {
-        if (message instanceof KeyPressMessage keyMessage) {
-            if (keyMessage.key().equals("left") && activeTab == 0 && topAnimePage > 0) {
-                topAnimePage--;
-            } else if (keyMessage.key().equals("right")
-                    && activeTab == 0
-                    && (topAnimePage + 1) * TOP_ANIME_COUNT < rankedAnime.length) {
-                topAnimePage++;
-            } else if (keyMessage.key().equals("up")) {
-                menuSelection = 0;
-            } else if (keyMessage.key().equals("down")) {
-                menuSelection = 1;
-            } else if (keyMessage.key().equals("enter")) {
-                activeTab = menuSelection;
-            }
+        if (message instanceof KeyPressMessage key) {
+            state.handleKeyPress(key.key(), rankedAnime.length);
         }
 
-        return new UpdateResult<>(this, null); 
+        return new UpdateResult<>(this, null);
     }
 
     @Override
     public String view() {
-        StringBuilder content = new StringBuilder();
-
-        if (activeTab == 0) {
-            int start = topAnimePage * TOP_ANIME_COUNT;
-            int end = Math.min(start + TOP_ANIME_COUNT, rankedAnime.length);
-            StringBuilder firstColumn = new StringBuilder();
-            StringBuilder secondColumn = new StringBuilder();
-            int midpoint = start + (end - start + 1) / 2;
-
-            for (int i = start; i < midpoint; i++) {
-                appendAnime(firstColumn, rankedAnime[i]);
-            }
-            for (int i = midpoint; i < end; i++) {
-                appendAnime(secondColumn, rankedAnime[i]);
-            }
-
-            content.append(String.format("Top Anime (%d-%d)%n%n", start + 1, end));
-            content.append(Join.joinHorizontal(
-                    Position.Top,
-                    columnStyle.render(firstColumn.toString().stripTrailing()),
-                    secondColumn.toString().stripTrailing())
-                );
-        }
-
-        String topAnimeTab = menuSelection == 0 ? "> Top Anime" : "  Top Anime";
-        String searchAnimeTab = menuSelection == 1 ? "> Search Anime" : "  Search Anime";
-        String tabs = topAnimeTab + "\n" + searchAnimeTab;
-
-        String contentBox = boxStyle.render(content.toString().stripTrailing());
-        String tabsBox = boxStyle.render(tabs);
-
-        return Join.joinHorizontal(Position.Top, tabsBox, contentBox);
-    }
-
-    private void appendAnime(StringBuilder content, Anime anime) {
-        String rank = anime.getRank() == null ? "-" : anime.getRank().toString();
-        content.append(String.format("#%s  %s%n", rank, anime.getTitle()));
-        content.append(String.format(
-                "    MAL score: %s%n"
-                        + "    Members: %s%n"
-                        + "    Type: %s%n"
-                        + "    Aired: %s%n%n",
-                displayValue(anime.getMean()),
-                displayValue(anime.getNumListUsers()),
-                displayValue(anime.getMediaType()),
-                formatDateRange(anime)));
-    }
-
-    private String formatDateRange(Anime anime) {
-        String startDate = displayValue(anime.getStartDate());
-        String endDate = displayValue(anime.getEndDate());
-
-        if (anime.getStartDate() == null && anime.getEndDate() == null) {
-            return "-";
-        }
-        if (anime.getEndDate() == null) {
-            return startDate + " to present";
-        }
-        return startDate + " to " + endDate;
-    }
-
-    private String displayValue(Object value) {
-        return value == null ? "-" : value.toString();
+        return AppView.render(state, rankedAnime);
     }
 }

@@ -21,7 +21,7 @@ public class Main {
             throw new IllegalStateException("Unable to load anime dataset: " + dataset, e);
         }
 
-        App app = new App(trie, animeList);
+        App app = new App(animeList);
 
         new Program(app).run();
     }
