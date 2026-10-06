@@ -67,8 +67,7 @@ public class App implements Model {
 
         return sorted;
     }
-
-    
+ 
     private int compareRank(Anime first, Anime second) {
         if (first.getRank() == null) {
             return second.getRank() == null ? 0 : 1;

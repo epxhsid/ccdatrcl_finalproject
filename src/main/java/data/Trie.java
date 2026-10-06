@@ -12,7 +12,7 @@ import model.Anime;
  * The implementation uses a tree-like structure where each node represents a character
  * in the string, and the path from the root to a node represents a string.
  * <p>
- * @author Joaquin M.
+ * @author Joaquin M., Giancarlo O.
  * @version 1.0
  * @since 2026-10-04
  */
