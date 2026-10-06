@@ -7,7 +7,7 @@ import org.apache.commons.csv.CSVParser;
 
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor 
+@NoArgsConstructor
 final class CsvSupport {
 
     static CSVParser parser(Reader reader) throws java.io.IOException {
