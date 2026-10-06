@@ -16,9 +16,9 @@ public class App implements Model {
     private final Trie trie;
     private Anime[] searchResults = new Anime[0];
 
-    public App(Anime[] animeList) {
+    public App(Anime[] animeList, Trie trie) {
         this.rankedAnime = Sorter.sortByRank(animeList);
-        this.trie = new Trie();
+        this.trie = trie;
         this.state = new AppState();
     }
 
