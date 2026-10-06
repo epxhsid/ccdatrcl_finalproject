@@ -3,7 +3,6 @@ package data;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import lombok.AllArgsConstructor;
 import model.Anime;
 import model.Genre;
 import model.Studio;
@@ -11,10 +10,14 @@ import model.Studio;
 /**
  * Coordinates loading the related anime datasets.
  */
-@AllArgsConstructor 
 public class DatasetLoader {
     private final AnimeDatasetLoader animeLoader;
     private final ReferenceDataLoader referenceLoader;
+
+    public DatasetLoader() {
+        animeLoader = new AnimeDatasetLoader();
+        referenceLoader = new ReferenceDataLoader();
+    }
 
     /**
      * Loads only anime records and indexes their titles.
