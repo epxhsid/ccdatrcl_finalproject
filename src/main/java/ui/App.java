@@ -36,7 +36,7 @@ public class App implements Model {
         String keyName = key.key();
 
         if (state.getActiveTab() != 1 || isNavigationKey(keyName)) {
-            state.handleKeyPress(keyName, rankedAnime.length);
+            state.handleKeyPress(keyName, rankedAnime.length, searchResults.length);
             return new UpdateResult<>(this, null);
         }
 
@@ -50,7 +50,7 @@ public class App implements Model {
                 searchResults = trie.prefixSearch(state.getSearchQuery());
             }
 
-            state.handleKeyPress(keyName, rankedAnime.length);
+            state.handleKeyPress(keyName, rankedAnime.length, searchResults.length);
             return new UpdateResult<>(this, null);
         }
 

@@ -40,38 +40,14 @@ public class AppView {
         return topAnime + "\n" + searchAnime;
     }
 
-    private static String renderContent(
-            AppState state,
-            Anime[] rankedAnime,
-            Anime[] searchResults) {
+    private static String renderContent(AppState state, Anime[] rankedAnime, Anime[] searchResults) {
         return switch (state.getActiveTab()) {
             case 0 -> TopAnimeView.render(
                     rankedAnime,
                     state.getTopAnimePage());
 
-            case 1 -> renderSearch(state, searchResults);
+            case 1 -> SearchAnimeView.render(state, searchResults);
             default -> "";
         };
-    }
-
-    private static String renderSearch(AppState state, Anime[] searchResults) {
-        StringBuilder content = new StringBuilder();
-        content.append("Search Anime\n\n");
-        content.append("Query: ").append(state.getSearchQuery()).append("_\n\n");
-
-        if (!state.isSearchSubmitted()) {
-            content.append("Type a title prefix, then press Enter.");
-        } else if (searchResults.length == 0) {
-            content.append("No anime found.");
-        } else {
-            for (Anime anime : searchResults) {
-                content.append(String.format(
-                        "#%s  %s%n",
-                        anime.getRank() == null ? "-" : anime.getRank(),
-                        anime.getTitle()));
-            }
-        }
-
-        return content.toString().stripTrailing();
     }
 }
