@@ -44,6 +44,12 @@
     </repositories>
 
     <dependencies>
+        <!-- TUI4J -->
+        <dependency>
+            <groupId>com.williamcallahan</groupId>
+            <artifactId>tui4j</artifactId>
+            <version>0.3.3</version>
+        </dependency>
         <!-- Commons CSV -->
         <dependency>
             <groupId>org.apache.commons</groupId>

@@ -2,6 +2,11 @@ package data;
 
 import model.Anime;
 
+/**
+ * A simple hash set implementation for Anime objects.
+ * Primary implementation of this data structure is from
+ * deduplication of anime records when loading the dataset.
+ */
 public class AnimeHashSet {
     private static final int DEFAULT_CAPACITY = 16;
     private static final double LOAD_FACTOR = 0.75;

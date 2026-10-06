@@ -1,17 +1,16 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter 
-@Setter 
-@NoArgsConstructor 
-@AllArgsConstructor 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Anime {
     private int id;
     private String title;
@@ -28,6 +27,6 @@ public class Anime {
     private String status;
     private String rating;
     private Integer averageEpisodeDuration;
-    private List<Integer> genreIds;
-    private List<Integer> studioIds;
+    private int[] genreIds;
+    private int[] studioIds;
 }
