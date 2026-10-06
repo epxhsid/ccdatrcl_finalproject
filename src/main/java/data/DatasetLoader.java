@@ -12,16 +12,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 
+import model.Genre;
+import model.Studio;
+
 public class DatasetLoader {
+    private Genre[] genres = new Genre[0];
+    private Studio[] studios = new Studio[0];
 
     /**
      * Reads an anime CSV dataset from the specified path, parses each record,
      * and maps all variations of the titles into the provided Trie.
      *
-     * @param path      The file path to the CSV dataset.
-     * @param trie      The search Trie where anime records will be indexed.
-     * @param animeList The list of anime to sort and select from.
-     * @return The top anime based on their rank.
+     * @param path The file path to the anime CSV dataset.
+     * @param trie The search Trie where anime records will be indexed.
+     * @return The anime records loaded from the dataset.
      * @throws IOException If the file cannot be read or parsed.
      */
     public Anime[] load(Path path, Trie trie) throws IOException {
@@ -41,6 +45,100 @@ public class DatasetLoader {
         }
 
         return animeSet.toArray();
+    }
+
+    /**
+     * Loads the genre and studio lookup tables before loading anime records.
+     *
+     * @param animePath path to the anime CSV
+     * @param genresPath path to the genres CSV
+     * @param studiosPath path to the studios CSV
+     * @param trie search trie where anime records are indexed
+     * @return anime records loaded from the dataset
+     * @throws IOException if any CSV cannot be read or parsed
+     */
+    public Anime[] load(Path animePath, Path genresPath, Path studiosPath, Trie trie) throws IOException {
+        genres = loadGenres(genresPath);
+        studios = loadStudios(studiosPath);
+        return load(animePath, trie);
+    }
+
+    public Genre[] getGenres() {
+        return genres;
+    }
+
+    public Studio[] getStudios() {
+        return studios;
+    }
+
+    private Genre[] loadGenres(Path path) throws IOException {
+        Genre[] result = new Genre[16];
+        int count = 0;
+
+        try (Reader reader = Files.newBufferedReader(path);
+                CSVParser parser = CSVFormat.DEFAULT.builder()
+                        .setHeader()
+                        .setSkipHeaderRecord(true)
+                        .get()
+                        .parse(reader)) {
+            for (CSVRecord record : parser) {
+                if (count == result.length) {
+                    result = growGenres(result);
+                }
+                result[count++] = new Genre(
+                        Integer.parseInt(record.get("id").trim()),
+                        record.get("name"));
+            }
+        }
+
+        return copyGenres(result, count);
+    }
+
+    private Studio[] loadStudios(Path path) throws IOException {
+        Studio[] result = new Studio[16];
+        int count = 0;
+
+        try (Reader reader = Files.newBufferedReader(path);
+                CSVParser parser = CSVFormat.DEFAULT.builder()
+                        .setHeader()
+                        .setSkipHeaderRecord(true)
+                        .get()
+                        .parse(reader)) {
+            for (CSVRecord record : parser) {
+                if (count == result.length) {
+                    result = growStudios(result);
+                }
+                result[count++] = new Studio(
+                        Integer.parseInt(record.get("id").trim()),
+                        record.get("name"));
+            }
+        }
+
+        return copyStudios(result, count);
+    }
+
+    private Genre[] growGenres(Genre[] genres) {
+        Genre[] grown = new Genre[genres.length * 2];
+        System.arraycopy(genres, 0, grown, 0, genres.length);
+        return grown;
+    }
+
+    private Studio[] growStudios(Studio[] studios) {
+        Studio[] grown = new Studio[studios.length * 2];
+        System.arraycopy(studios, 0, grown, 0, studios.length);
+        return grown;
+    }
+
+    private Genre[] copyGenres(Genre[] genres, int length) {
+        Genre[] copy = new Genre[length];
+        System.arraycopy(genres, 0, copy, 0, length);
+        return copy;
+    }
+
+    private Studio[] copyStudios(Studio[] studios, int length) {
+        Studio[] copy = new Studio[length];
+        System.arraycopy(studios, 0, copy, 0, length);
+        return copy;
     }
 
     private Anime parseAnime(CSVRecord record) {

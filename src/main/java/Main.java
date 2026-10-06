@@ -12,11 +12,13 @@ public class Main {
     public static void main(String[] args) {
         Trie trie = new Trie();
         Path dataset = Path.of("data/anime.csv");
+        Path genres = Path.of("data/genres.csv");
+        Path studios = Path.of("data/studios.csv");
         DatasetLoader loader = new DatasetLoader();
         Anime[] animeList;
 
         try {
-            animeList = loader.load(dataset, trie);
+            animeList = loader.load(dataset, genres, studios, trie);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load anime dataset: " + dataset, e);
         }
