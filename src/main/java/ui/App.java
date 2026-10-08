@@ -43,7 +43,7 @@ public class App implements Model {
             return new UpdateResult<>(this, null);
         }
 
-        if (keyName.equals("backspace")) {
+        if (isBackspaceKey(keyName)) {
             state.removeSearchCharacter();
             return new UpdateResult<>(this, null);
         }
@@ -77,5 +77,9 @@ public class App implements Model {
                 || key.equals("tab")
                 || key.equals("shift+tab")
                 || key.equals("escape");
+    }
+
+    private boolean isBackspaceKey(String key) {
+        return key.equals("backspace") || key.equals("ctrl+h");
     }
 }
